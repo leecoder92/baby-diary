@@ -3,10 +3,10 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import SearchBar from "../components/search";
-import diaryData from "../diary1.json";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 interface Diary {
   title: string;
@@ -16,10 +16,16 @@ interface Diary {
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [diaries, setDiaries] = useState<Diary[]>(diaryData.diary);
+  const [diaries, setDiaries] = useState<Diary[]>();
   useEffect(() => {
-    console.log(diaryData);
+    axios({
+      method: "get",
+      url: "http://localhost:3000/api/diary",
+    }).then((res) => {
+      setDiaries(res.data);
+    });
   }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -28,21 +34,37 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SearchBar />
-      {diaries.map((diary, index) => {
-        return (
-          <div
-            style={{ border: "1px solid black", marginBottom: "10px" }}
-            key={index}
-            onClick={() => {
-              router.push(`/diary/${diary.title}`);
-            }}
-          >
-            <p>{diary.title}</p>
-            <p>{diary.contents}</p>
-            <p>{dayjs(diary.created_at).format("YYYY년 MM월 DD일")}</p>
-          </div>
-        );
-      })}
+      {diaries &&
+        diaries.slice(0, 10).map((diary, index) => {
+          return (
+            <div
+              style={{
+                border: "1px solid black",
+                marginBottom: "15px",
+                padding: "10px",
+                position: "relative",
+              }}
+              key={index}
+              onClick={() => {
+                router.push(`/diary/${index}`);
+              }}
+            >
+              <p
+                style={{
+                  position: "absolute",
+                  top: "-25px",
+                  backgroundColor: "white",
+                }}
+              >
+                {diary.title}
+              </p>
+              <p className={styles.diaryContents}>{diary.contents}</p>
+              <div style={{ textAlign: "end" }}>
+                <p>{dayjs(diary.created_at).format("YYYY년 MM월 DD일")}</p>
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 };

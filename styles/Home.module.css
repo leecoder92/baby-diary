@@ -1,5 +1,5 @@
 .container {
-  padding: 0 2rem;
+  padding: 0 1rem;
 }
 
 .main {
@@ -113,4 +113,19 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+.diaryContents {
+  display: inline-block; 
+  /* width: 200px;  */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  white-space: normal; 
+  line-height: 1.2; 
+  height: 3.6em;
+  word-wrap: break-word; 
+  display: -webkit-box; 
+  -webkit-line-clamp: 3; 
+  -webkit-box-orient: vertical;
 }

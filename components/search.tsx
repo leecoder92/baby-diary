@@ -39,7 +39,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function SearchBar() {
   return (
-    <Search>
+    <Search sx={{ mb: "20px" }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <SearchIconWrapper>
           <SearchIcon />
