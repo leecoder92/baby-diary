@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import SearchBar from "../components/search";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -18,6 +18,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [diaries, setDiaries] = useState<Diary[]>();
   const [original, setOriginal] = useState<Diary[]>();
+  const [loadNew, setLoadNew] = useState<boolean>(false);
   useEffect(() => {
     axios({
       method: "get",
@@ -28,12 +29,34 @@ const Home: NextPage = () => {
     });
   }, []);
 
-  // const goToDetail = (diary:Diary) => {
-  //   if (original) {
-  //     const originalIndex = original.findIndex(i => i.title === diary.title)
-  //     router.push(`/diary/${originalIndex}`)
-  //   }
-  // }
+  const [page, setPage] = useState(10);
+
+  useEffect(() => {
+    document.addEventListener("scroll", (e: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        document.documentElement;
+      if (scrollHeight - scrollTop === clientHeight) {
+        loadMore();
+      }
+    });
+  }, []);
+
+  const loadMore = () => {
+    setPage((prev) => prev + 10);
+  };
+
+  useEffect(() => {
+    const getNewDiary = setTimeout(() => {
+      axios({
+        method: "get",
+        url: "/api/diary/new",
+      }).then((res) => {
+        setLoadNew(true);
+        console.log(res.data);
+      });
+    }, 10000);
+    return () => clearTimeout(getNewDiary);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -47,11 +70,12 @@ const Home: NextPage = () => {
           original={original}
           diaries={diaries}
           setDiaries={setDiaries}
+          setPage={setPage}
         />
       )}
 
       {diaries &&
-        diaries.map((diary, index) => {
+        diaries.slice(0, page).map((diary, index) => {
           return (
             <div
               style={{

@@ -63,6 +63,7 @@ export default function SearchBar(props: any) {
         });
       } else {
         props.setDiaries(filterDiary);
+        props.setPage(10);
       }
     }, 1000);
     return () => clearTimeout(searchDiary);
