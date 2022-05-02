@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [diaries, setDiaries] = useState<Diary[]>();
   const [original, setOriginal] = useState<Diary[]>();
-  const [loadNew, setLoadNew] = useState<boolean>(false);
+
   useEffect(() => {
     axios({
       method: "get",
@@ -45,14 +45,19 @@ const Home: NextPage = () => {
     setPage((prev) => prev + 10);
   };
 
+  const [newLength, setNewLength] = useState<number>();
+  const [newLoad, setNewLoad] = useState(false);
+
   useEffect(() => {
     const getNewDiary = setTimeout(() => {
       axios({
         method: "get",
         url: "/api/diary/new",
       }).then((res) => {
-        setLoadNew(true);
-        console.log(res.data);
+        setDiaries(res.data.newDiaryInfo);
+        setOriginal(res.data.newDiaryInfo);
+        setNewLength(res.data.newDiaries);
+        setNewLoad(true);
       });
     }, 10000);
     return () => clearTimeout(getNewDiary);
@@ -73,43 +78,51 @@ const Home: NextPage = () => {
           setPage={setPage}
         />
       )}
-
-      {diaries &&
-        diaries.slice(0, page).map((diary, index) => {
-          return (
-            <div
-              style={{
-                border: "1px solid black",
-                marginBottom: "15px",
-                padding: "10px",
-                position: "relative",
-              }}
-              key={index}
-              onClick={() => {
-                if (original) {
-                  const originalIndex = original.findIndex(
-                    (item) => item.title === diary.title
-                  );
-                  router.push(`/diary/${originalIndex}`);
-                }
-              }}
-            >
-              <p
-                style={{
-                  position: "absolute",
-                  top: "-25px",
-                  backgroundColor: "white",
-                }}
-              >
-                {diary.title}
-              </p>
-              <p className={styles.diaryContents}>{diary.contents}</p>
-              <div style={{ textAlign: "end" }}>
-                <p>{dayjs(diary.created_at).format("YYYY년 MM월 DD일")}</p>
-              </div>
-            </div>
-          );
-        })}
+      <div>
+        <div style={{ marginTop: "20px" }}>
+          {newLength && <p>{newLength}개의 일기가 추가되었습니다.</p>}
+          {diaries &&
+            diaries.slice(0, page).map((diary, index) => {
+              return (
+                <div
+                  style={{
+                    border: "1px solid black",
+                    marginBottom: "15px",
+                    padding: "10px",
+                    position: "relative",
+                  }}
+                  key={index}
+                  onClick={() => {
+                    if (original) {
+                      const originalIndex = original.findIndex(
+                        (item) => item.title === diary.title
+                      );
+                      if (newLoad) {
+                        router.push(`/new/${originalIndex}`);
+                      } else {
+                        router.push(`/diary/${originalIndex}`);
+                      }
+                    }
+                  }}
+                >
+                  <p
+                    style={{
+                      position: "absolute",
+                      top: "-25px",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    {diary.title}
+                  </p>
+                  <p className={styles.diaryContents}>{diary.contents}</p>
+                  <div style={{ textAlign: "end" }}>
+                    <p>{dayjs(diary.created_at).format("YYYY년 MM월 DD일")}</p>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </div>
     </div>
   );
 };

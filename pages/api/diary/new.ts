@@ -16,5 +16,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       break;
     }
   }
-  res.status(200).json(newDiaries);
+  res
+    .status(200)
+    .json({ newDiaries: newDiaries.length, newDiaryInfo: newDiaryInfo });
 }

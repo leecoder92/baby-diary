@@ -8,14 +8,14 @@ import { IconButton } from "@mui/material";
 import axios from "axios";
 import dayjs from "dayjs";
 
-const DiaryDetail: NextPage = () => {
+const NewDiaryDetail: NextPage = () => {
   const router = useRouter();
 
   const [diaryDetail, setDiaryDetail] = useState<any>();
   useEffect(() => {
     axios({
       method: "get",
-      url: `/api/diary/${router.query.index}`,
+      url: `/api/new/${router.query.index}`,
     }).then((res) => {
       setDiaryDetail(res.data.titleResponse);
     });
@@ -54,4 +54,4 @@ const DiaryDetail: NextPage = () => {
   );
 };
 
-export default DiaryDetail;
+export default NewDiaryDetail;

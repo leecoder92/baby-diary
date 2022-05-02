@@ -1,25 +1,18 @@
 /* eslint-disable */
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  styled,
-  Box,
-  InputBase,
-  List,
-  ListItem,
-  Divider,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  Button,
-} from "@mui/material";
+import { styled, Box, InputBase } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Search = styled("div")({
-  marginTop: "10px",
+  backgroundColor: "white",
   border: "1px solid black",
   borderRadius: "60px",
   width: "100%",
+  marginTop: "10px",
+  position: "sticky",
+  top: "10px",
+  zIndex: 1,
 });
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -31,7 +24,6 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 }));
 
 const SearchInput = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -57,7 +49,7 @@ export default function SearchBar(props: any) {
       if (!searchValue) {
         axios({
           method: "get",
-          url: "http://localhost:3000/api/diary",
+          url: "/api/diary",
         }).then((res) => {
           props.setDiaries(res.data);
         });
@@ -70,8 +62,14 @@ export default function SearchBar(props: any) {
   }, [searchValue]);
 
   return (
-    <Search sx={{ mb: "20px" }}>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+    <Search>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <SearchIconWrapper>
           <SearchIcon />
         </SearchIconWrapper>
