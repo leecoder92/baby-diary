@@ -28,7 +28,7 @@ npm run dev
 
 로 실행해주세요.
 
-	4.  localhost:3000으로 접속해주세요.
+4.  localhost:3000으로 접속해주세요.
 
 ```
 http://localhost:3000
