@@ -20,10 +20,19 @@ npm run build
 npm start
 ```
 
-3. 개발자 모드로 프로젝트를 실행하시려면
+​	3-1. 개발자 모드로 프로젝트를 실행하시려면
 
 ```
 npm run dev
 ```
 
 로 실행해주세요.
+
+	4.  localhost:3000으로 접속해주세요.
+
+```
+http://localhost:3000
+```
+
+
+

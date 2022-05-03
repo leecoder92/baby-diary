@@ -1,7 +1,5 @@
-/* eslint-disable */
 import type { NextPage } from "next";
 import CloseIcon from "@mui/icons-material/Close";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
@@ -19,7 +17,7 @@ const NewDiaryDetail: NextPage = () => {
     }).then((res) => {
       setDiaryDetail(res.data.titleResponse);
     });
-  }, []);
+  }, [router.query.index]);
 
   return (
     <>

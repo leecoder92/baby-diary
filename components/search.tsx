@@ -1,8 +1,7 @@
-/* eslint-disable */
 import SearchIcon from "@mui/icons-material/Search";
-import { styled, Box, InputBase } from "@mui/material";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { styled, Box, InputBase, IconButton } from "@mui/material";
+import { useEffect, useState, ChangeEvent } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Search = styled("div")({
   backgroundColor: "white",
@@ -15,7 +14,7 @@ const Search = styled("div")({
   zIndex: 1,
 });
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
+const IconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 1),
   pointerEvents: "none",
   display: "flex",
@@ -33,7 +32,7 @@ const SearchInput = styled(InputBase)(({ theme }) => ({
 
 export default function SearchBar(props: any) {
   const [searchValue, setSearchValue] = useState("");
-  const handleSearchValue = (e: any) => {
+  const handleSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
   useEffect(() => {
@@ -47,19 +46,18 @@ export default function SearchBar(props: any) {
         }
       });
       if (!searchValue) {
-        axios({
-          method: "get",
-          url: "/api/diary",
-        }).then((res) => {
-          props.setDiaries(res.data);
-        });
+        props.setDiaries(props.original);
       } else {
         props.setDiaries(filterDiary);
         props.setPage(10);
       }
     }, 1000);
     return () => clearTimeout(searchDiary);
-  }, [searchValue]);
+  }, [props, searchValue]);
+
+  const handleDelete = () => {
+    setSearchValue("");
+  };
 
   return (
     <Search>
@@ -70,14 +68,24 @@ export default function SearchBar(props: any) {
           alignItems: "center",
         }}
       >
-        <SearchIconWrapper>
+        <IconWrapper>
           <SearchIcon />
-        </SearchIconWrapper>
+        </IconWrapper>
         <SearchInput
           onChange={handleSearchValue}
           fullWidth
           placeholder="search"
+          value={searchValue}
         />
+        <IconButton
+          sx={{
+            cursor: "pointer",
+            visibility: searchValue ? "visible" : "hidden",
+          }}
+          onClick={handleDelete}
+        >
+          <CloseIcon />
+        </IconButton>
       </Box>
     </Search>
   );

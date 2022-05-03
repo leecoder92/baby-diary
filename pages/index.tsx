@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import SearchBar from "../components/search";
 import { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import axios from "axios";
+import DiaryBox from "../components/diaryBox";
 
 interface Diary {
   title: string;
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   const [page, setPage] = useState(10);
 
   useEffect(() => {
-    document.addEventListener("scroll", (e: any) => {
+    document.addEventListener("scroll", () => {
       const { scrollHeight, scrollTop, clientHeight } =
         document.documentElement;
       if (scrollHeight - scrollTop === clientHeight) {
@@ -63,6 +63,19 @@ const Home: NextPage = () => {
     return () => clearTimeout(getNewDiary);
   }, []);
 
+  const handlePushRouter = (diary: Diary) => {
+    if (original) {
+      const originalIndex = original.findIndex(
+        (item) => item.title === diary.title
+      );
+      if (newLoad) {
+        router.push(`/new/${originalIndex}`);
+      } else {
+        router.push(`/diary/${originalIndex}`);
+      }
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -78,50 +91,21 @@ const Home: NextPage = () => {
           setPage={setPage}
         />
       )}
-      <div>
-        <div style={{ marginTop: "20px" }}>
-          {newLength && <p>{newLength}개의 일기가 추가되었습니다.</p>}
-          {diaries &&
-            diaries.slice(0, page).map((diary, index) => {
-              return (
-                <div
-                  style={{
-                    border: "1px solid black",
-                    marginBottom: "15px",
-                    padding: "10px",
-                    position: "relative",
-                  }}
-                  key={index}
-                  onClick={() => {
-                    if (original) {
-                      const originalIndex = original.findIndex(
-                        (item) => item.title === diary.title
-                      );
-                      if (newLoad) {
-                        router.push(`/new/${originalIndex}`);
-                      } else {
-                        router.push(`/diary/${originalIndex}`);
-                      }
-                    }
-                  }}
-                >
-                  <p
-                    style={{
-                      position: "absolute",
-                      top: "-25px",
-                      backgroundColor: "white",
-                    }}
-                  >
-                    {diary.title}
-                  </p>
-                  <p className={styles.diaryContents}>{diary.contents}</p>
-                  <div style={{ textAlign: "end" }}>
-                    <p>{dayjs(diary.created_at).format("YYYY년 MM월 DD일")}</p>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
+
+      <div style={{ marginTop: "20px" }}>
+        {newLength && (
+          <p style={{ textAlign: "center", marginBottom: "30px" }}>
+            {newLength}개의 일기가 추가되었습니다.
+          </p>
+        )}
+        {diaries &&
+          diaries.slice(0, page).map((diary, index) => {
+            return (
+              <div key={index} onClick={() => handlePushRouter(diary)}>
+                <DiaryBox diary={diary} />
+              </div>
+            );
+          })}
       </div>
     </div>
   );
